@@ -66,6 +66,10 @@
         .accordion-content.active {
             max-height: 500px;
         }
+        /* Ensuring proper layout for lucide icons inside buttons */
+        .faq-btn i {
+            display: inline-block;
+        }
     </style>
 </head>
 <body class="font-sans text-brand-dark bg-brand-light antialiased selection:bg-brand-gold selection:text-white">
@@ -74,10 +78,10 @@
     <nav class="fixed w-full z-50 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <div class="flex-shrink-0 flex items-center gap-2">
+                <a href="#" class="flex-shrink-0 flex items-center gap-2 group">
                     <img src="gambarasset/logo.webp" alt="Logo EleganceSpace" class="w-10 h-10 object-contain">
-                    <span class="font-serif text-2xl font-bold text-white drop-shadow-md">Elegance<span class="text-brand-gold">Space</span></span>
-                </div>
+                    <span class="font-serif text-2xl font-bold text-white drop-shadow-md group-hover:opacity-80 transition-opacity">Elegance<span class="text-brand-gold">Space</span></span>
+                </a>
                 <div class="hidden md:flex space-x-8 items-center">
                     <a href="#masalah" class="text-white hover:text-brand-gold transition-colors text-sm font-medium drop-shadow-md">Mengapa Kami</a>
                     <a href="#tentang" class="text-white hover:text-brand-gold transition-colors text-sm font-medium drop-shadow-md">Profil</a>
@@ -451,7 +455,7 @@
                                 <i data-lucide="chevron-down" class="w-5 h-5 text-brand-gold transition-transform duration-300"></i>
                             </button>
                             <div class="accordion-content px-6 text-gray-600 text-sm">
-                                <p class="pb-4">Tidak. Kami memberikan konsultasi awal dan survei lokasi (khusus area Palangka Raya) secara GRATIS untuk memahami kebutuhan dan preferensi Anda.</p>
+                                <p class="pb-4 pt-2">Tidak. Kami memberikan konsultasi awal dan survei lokasi (khusus area Palangka Raya) secara GRATIS untuk memahami kebutuhan dan preferensi Anda.</p>
                             </div>
                         </div>
                         <!-- FAQ 2 -->
@@ -461,7 +465,7 @@
                                 <i data-lucide="chevron-down" class="w-5 h-5 text-brand-gold transition-transform duration-300"></i>
                             </button>
                             <div class="accordion-content px-6 text-gray-600 text-sm">
-                                <p class="pb-4">Ya, kami melayani jasa desain (3D, gambar kerja, RAB). Namun, kami merekomendasikan sistem *Design & Build* bersama kami untuk memastikan hasil akhir 100% presisi dengan desain.</p>
+                                <p class="pb-4 pt-2">Ya, kami melayani jasa desain (3D, gambar kerja, RAB). Namun, kami merekomendasikan sistem *Design & Build* bersama kami untuk memastikan hasil akhir 100% presisi dengan desain.</p>
                             </div>
                         </div>
                         <!-- FAQ 3 -->
@@ -471,7 +475,7 @@
                                 <i data-lucide="chevron-down" class="w-5 h-5 text-brand-gold transition-transform duration-300"></i>
                             </button>
                             <div class="accordion-content px-6 text-gray-600 text-sm">
-                                <p class="pb-4">Waktu pengerjaan sangat bervariasi tergantung luasan area dan tingkat kerumitan desain. Umumnya, untuk 1 ruangan memakan waktu 2-4 minggu. Jadwal pasti akan tertera di kontrak kerja.</p>
+                                <p class="pb-4 pt-2">Waktu pengerjaan sangat bervariasi tergantung luasan area dan tingkat kerumitan desain. Umumnya, untuk 1 ruangan memakan waktu 2-4 minggu. Jadwal pasti akan tertera di kontrak kerja.</p>
                             </div>
                         </div>
                         <!-- FAQ 4 -->
@@ -481,7 +485,7 @@
                                 <i data-lucide="chevron-down" class="w-5 h-5 text-brand-gold transition-transform duration-300"></i>
                             </button>
                             <div class="accordion-content px-6 text-gray-600 text-sm">
-                                <p class="pb-4">Tentu saja. Kami memberikan masa retensi/garansi pemeliharaan selama 3 bulan setelah serah terima proyek untuk menjamin kualitas pengerjaan kami.</p>
+                                <p class="pb-4 pt-2">Tentu saja. Kami memberikan masa retensi/garansi pemeliharaan selama 3 bulan setelah serah terima proyek untuk menjamin kualitas pengerjaan kami.</p>
                             </div>
                         </div>
                     </div>
@@ -650,6 +654,7 @@
     <!-- Scripts -->
     <script>
         // Initialize Lucide Icons
+        // Ensure this runs before we try to manipulate icon elements
         lucide.createIcons();
 
         // Navbar Scroll Effect
@@ -665,28 +670,46 @@
         });
 
         // FAQ Accordion Logic
-        const faqButtons = document.querySelectorAll('.faq-btn');
-        faqButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const content = button.nextElementSibling;
-                const icon = button.querySelector('i');
+        // Wrap in DOMContentLoaded to ensure elements exist before attaching listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Give a small delay to ensure Lucide icons are fully rendered into SVGs
+            setTimeout(() => {
+                const faqButtons = document.querySelectorAll('.faq-btn');
                 
-                // Close all other open accordions
-                document.querySelectorAll('.accordion-content').forEach(item => {
-                    if (item !== content) {
-                        item.classList.remove('active');
-                        item.previousElementSibling.querySelector('i').style.transform = 'rotate(0deg)';
-                    }
-                });
+                faqButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        // Prevent default button behavior
+                        e.preventDefault();
+                        
+                        const content = button.nextElementSibling;
+                        // Find the SVG directly since Lucide replaces the <i> tag
+                        const icon = button.querySelector('svg'); 
+                        
+                        // Close all other open accordions
+                        document.querySelectorAll('.accordion-content').forEach(item => {
+                            if (item !== content) {
+                                item.classList.remove('active');
+                                const otherIcon = item.previousElementSibling.querySelector('svg');
+                                if (otherIcon) {
+                                    otherIcon.style.transform = 'rotate(0deg)';
+                                    otherIcon.style.transition = 'transform 0.3s ease';
+                                }
+                            }
+                        });
 
-                // Toggle current accordion
-                content.classList.toggle('active');
-                if (content.classList.contains('active')) {
-                    icon.style.transform = 'rotate(180deg)';
-                } else {
-                    icon.style.transform = 'rotate(0deg)';
-                }
-            });
+                        // Toggle current accordion
+                        content.classList.toggle('active');
+                        if (icon) {
+                            icon.style.transition = 'transform 0.3s ease';
+                            if (content.classList.contains('active')) {
+                                icon.style.transform = 'rotate(180deg)';
+                            } else {
+                                icon.style.transform = 'rotate(0deg)';
+                            }
+                        }
+                    });
+                });
+            }, 100); // Small delay to let lucide do its job
         });
     </script>
 </body>
